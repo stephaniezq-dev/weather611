@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>CHECK YOUR WEATHER ^_^</title>
-  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <title>Weather Lookup App</title>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800&display=swap" rel="stylesheet">
   <style>
     body {
       font-family: 'Nunito', sans-serif;
@@ -93,23 +93,18 @@
 </head>
 <body>
   <div class="weather-container">
-    <h1>🌦️ CHECK Your Weather ^_^</h1>
+    <h1>🌦️ Weather Lookup App</h1>
     <p>Enter any city to see its current weather.</p>
     <input type="text" id="cityInput" placeholder="Enter city name..." />
     <br><br>
     <button onclick="getWeather()">Get Weather</button>
 
-    <div class="result" id="result" aria-live="polite"></div>
+    <div class="result" id="result"></div>
   </div>
 
   <footer>Powered by OpenWeatherMap API</footer>
 
   <script>
-    // Small addition: press Enter to search.
-    document.getElementById("cityInput").addEventListener("keydown", function(event) {
-      if (event.key === "Enter") getWeather();
-    });
-
     async function getWeather() {
       const city = document.getElementById("cityInput").value.trim();
       const resultDiv = document.getElementById("result");
@@ -122,13 +117,13 @@
 
       resultDiv.innerHTML = "<p>Loading...</p>";
 
-      const apiKey = "YOUR_OPENWEATHERMAP_API_KEY";
-      const url = `https://api.openweathermap.org/data/2.5/weather?q=${encodeURIComponent(city)}&appid=${apiKey}&units=metric`;
+      const apiKey = "c086d0ddb0d7991ee1929050cb699643";
+      const url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`;
 
       try {
         const response = await fetch(url);
         if (!response.ok) {
-          throw new Error("Weather request failed");
+          throw new Error("City not found");
         }
         const data = await response.json();
 
@@ -143,7 +138,7 @@
           <p>${description.charAt(0).toUpperCase() + description.slice(1)}</p>
         `;
       } catch (error) {
-        resultDiv.innerHTML = "<p class='error'>Unable to find weather. Please check the city and API key.</p>";
+        resultDiv.innerHTML = "<p class='error'>City not found. Please try again.</p>";
       }
     }
   </script>
