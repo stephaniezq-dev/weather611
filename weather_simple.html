@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CHECK YOUR WEATHER ^_^</title>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Nunito', sans-serif;
+      background: linear-gradient(to bottom right, #ffcfb8, #b8e2ed);
+      min-height: 100vh;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: #344054;
+      text-align: center;
+    }
+
+    h1 {
+      font-size: 2rem;
+      margin-bottom: 1rem;
+      color: #35475b;
+    }
+
+    .weather-container {
+      background: rgba(255, 255, 255, 0.7);
+      padding: 2rem;
+      border-radius: 22px;
+      box-shadow: 0 6px 18px rgba(52, 64, 84, 0.12);
+      max-width: 400px;
+      width: 90%;
+      box-sizing: border-box;
+    }
+
+    input {
+      padding: 0.6rem;
+      border: 1px solid #d6dce3;
+      border-radius: 9px;
+      width: 70%;
+      font-family: inherit;
+      font-size: 1rem;
+      outline: none;
+      box-sizing: border-box;
+    }
+
+    input:focus {
+      border-color: #e58e73;
+    }
+
+    button {
+      background-color: #e58e73;
+      color: white;
+      border: none;
+      border-radius: 9px;
+      padding: 0.6rem 1.2rem;
+      font-family: inherit;
+      font-weight: 700;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    button:hover {
+      background-color: #cf7258;
+    }
+
+    .result {
+      margin-top: 1.5rem;
+      font-size: 1.1rem;
+    }
+
+    .error {
+      color: #ba453b;
+      font-weight: bold;
+    }
+
+    .temp {
+      font-size: 2.5rem;
+      font-weight: bold;
+      margin-top: 1rem;
+      color: #d5755b;
+    }
+
+    footer {
+      margin-top: 2rem;
+      font-size: 0.8rem;
+      color: #455468;
+    }
+  </style>
+</head>
+<body>
+  <div class="weather-container">
+    <h1>🌦️ CHECK Your Weather ^_^</h1>
+    <p>Enter any city to see its current weather.</p>
+    <input type="text" id="cityInput" placeholder="Enter city name..." />
+    <br><br>
+    <button onclick="getWeather()">Get Weather</button>
+
+    <div class="result" id="result" aria-live="polite"></div>
+  </div>
+
+  <footer>Powered by OpenWeatherMap API</footer>
+
+  <script>
+    // Small addition: press Enter to search.
+    document.getElementById("cityInput").addEventListener("keydown", function(event) {
+      if (event.key === "Enter") getWeather();
+    });
+
+    async function getWeather() {
+      const city = document.getElementById("cityInput").value.trim();
+      const resultDiv = document.getElementById("result");
+      resultDiv.innerHTML = "";
+
+      if (!city) {
+        resultDiv.innerHTML = "<p class='error'>Please enter a city name.</p>";
+        return;
+      }
+
+      resultDiv.innerHTML = "<p>Loading...</p>";
+
+      const apiKey = "YOUR_OPENWEATHERMAP_API_KEY";
+      const url = `https://api.openweathermap.org/data/2.5/weather?q=${encodeURIComponent(city)}&appid=${apiKey}&units=metric`;
+
+      try {
+        const response = await fetch(url);
+        if (!response.ok) {
+          throw new Error("Weather request failed");
+        }
+        const data = await response.json();
+
+        const temperature = data.main.temp;
+        const description = data.weather[0].description;
+        const icon = data.weather[0].icon;
+
+        resultDiv.innerHTML = `
+          <h2>${data.name}, ${data.sys.country}</h2>
+          <img src="https://openweathermap.org/img/wn/${icon}@2x.png" alt="Weather Icon" />
+          <p class="temp">${temperature}°C</p>
+          <p>${description.charAt(0).toUpperCase() + description.slice(1)}</p>
+        `;
+      } catch (error) {
+        resultDiv.innerHTML = "<p class='error'>Unable to find weather. Please check the city and API key.</p>";
+      }
+    }
+  </script>
+</body>
+</html>
